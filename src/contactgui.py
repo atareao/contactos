@@ -10,6 +10,9 @@ except Exception as exception:
 from gi.repository import Gtk
 
 from enum import Enum
+from contact import Contact
+
+
 class Crud(Enum):
     CREATE = 0
     READ = 1
@@ -52,8 +55,26 @@ class ContactDialog(Gtk.Dialog):
         grid.attach(Gtk.Label.new("Mobile:"), 0, 2, 1, 1)
         self._mobile = Gtk.Entry()
         grid.attach(self._mobile, 1, 2, 1, 1)
+
+        if contact:
+            self._name.set_text(contact._name)
+            self._email.set_text(contact._email)
+            self._mobile.set_text(contact._mobile)
+            self._contact = contact
+        else:
+            self._contact = None
         self.show_all()
 
+    def get_contact(self):
+        if self._contact:
+            self._contact._name = self._name.get_text()
+            self._contact._email = self._email.get_text()
+            self._contact._mobile = self._mobile.get_text()
+        else:
+            self._contact = Contact.new(self._name.get_text(),
+                                        self._email.get_text(),
+                                        self._mobile.get_text())
+        return self._contact
 
 
 if __name__ == '__main__':
