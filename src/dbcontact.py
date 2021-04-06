@@ -17,7 +17,12 @@ class DbContact:
         """
         self._db.execute(sql)
 
-    def new(self, name, email, mobile):
+    def new(self, contact):
+        name = contact.name
+        email = contact.email
+        mobile = contact.mobile
+        if len(self.search_by_email(email)) > 0:
+            raise Exception('This email "{}" exists'.format(email))
         sql = 'INSERT INTO contacts (name, email, mobile) VALUES ("{}", "{}", "{}")'.format(name, email, mobile)
         id = self._db.execute(sql)
         return self.get(id)
@@ -51,6 +56,14 @@ class DbContact:
         for item in self._db.select(sql):
             result.append(Contact.toContact(*item))
         return result
+
+    def list(self):
+        result = []
+        sql = 'SELECT * FROM contacts'
+        for item in self._db.select(sql):
+            result.append(Contact.toContact(*item))
+        return result
+
 
     def exists(self, contact):
         sql = 'SELECT * FROM contacts WHERE LOWER(email) like "{}"'

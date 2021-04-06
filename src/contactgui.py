@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 #-*- coding: utf-8 -*-
 
+import sys
+from enum import Enum
+from contact import Contact
 import gi
 try:
     gi.require_version("Gtk", "3.0")
 except Exception as exception:
     print(exception)
-    exit(1)
+    sys.exit(1)
 from gi.repository import Gtk
-
-from enum import Enum
-from contact import Contact
 
 
 class Crud(Enum):
@@ -21,7 +21,14 @@ class Crud(Enum):
 
 
 class ContactDialog(Gtk.Dialog):
+    """
+    Dialog de contacto
+    """
+
     def __init__(self, crud, contact=None):
+        """
+        Contact inizialization
+        """
         Gtk.Dialog.__init__(self)
         if crud == Crud.CREATE:
             title = "Add"
@@ -35,6 +42,7 @@ class ContactDialog(Gtk.Dialog):
         else:
             title = "Show"
             self._crud = Crud.READ
+        self.set_title(title)
         self.add_button("Ok", Gtk.ResponseType.OK)
         self.add_button("Cancel", Gtk.ResponseType.CANCEL)
         grid = Gtk.Grid()
@@ -66,10 +74,13 @@ class ContactDialog(Gtk.Dialog):
         self.show_all()
 
     def get_contact(self):
+        """
+        get contact from dialog
+        """
         if self._contact:
-            self._contact._name = self._name.get_text()
-            self._contact._email = self._email.get_text()
-            self._contact._mobile = self._mobile.get_text()
+            self._contact.name = self._name.get_text()
+            self._contact.email = self._email.get_text()
+            self._contact.mobile = self._mobile.get_text()
         else:
             self._contact = Contact.new(self._name.get_text(),
                                         self._email.get_text(),

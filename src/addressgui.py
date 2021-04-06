@@ -10,8 +10,11 @@ except Exception as exception:
 from gi.repository import Gtk
 from contactgui import ContactDialog, Crud
 from row import Row
+from dbcontact import DbContact
+
 
 class AddressDialog(Gtk.Dialog):
+
     def __init__(self):
         Gtk.Dialog.__init__(self)
         self.add_button("Ok", Gtk.ResponseType.OK)
@@ -46,14 +49,22 @@ class AddressDialog(Gtk.Dialog):
 
         self._list = Gtk.ListBox()
         scrolled_window.add(self._list)
+        
+        self.load()
+
         self.show_all()
 
     def add(self, widget):
         cd = ContactDialog(Crud.CREATE)
         if cd.run() == Gtk.ResponseType.OK:
-            contact = cd.get_contact()
-            list_box_row = Row(contact)
-            self._list.add(list_box_row)
+            try:
+                contact = self._db.new(cd.get_contact())
+                if contact:
+                    self._list.add(Row(contact))
+            except Exception as exception:
+                print(exception)
+                self.show_message("Error", str(exception))
+
         cd.destroy()
 
     def edit(self, widget):
@@ -65,6 +76,20 @@ class AddressDialog(Gtk.Dialog):
                 contact = cd.get_contact()
                 selected_row.set_contact(contact)
             cd.destroy()
+
+    def load(self):
+        self._db = DbContact('database.db')
+        for contact in self._db.list():
+            self._list.add(Row(contact))
+
+    def show_message(self, title, message):
+        dialog = Gtk.MessageDialog()
+        dialog.set_parent(self)
+        dialog.set_title(title)
+        dialog.set_markup(message)
+        dialog.add_button('Ok', Gtk.ResponseType.OK)
+        dialog.run()
+        dialog.destroy()
 
 
 
