@@ -11,6 +11,7 @@ except Exception as exception:
 
 from gi.repository import AppIndicator3
 from gi.repository import Gtk
+from addressgui import AddressDialog
 
 class Indicator:
     def __init__(self):
@@ -24,7 +25,7 @@ class Indicator:
 
     def set_icon(self):
         # TODO: add path
-        self.indicator.set_icon_theme_path(path)
+        #self.indicator.set_icon_theme_path(path)
         self.indicator.set_icon_full('contactos', '')
 
     def build_menu(self):
@@ -43,7 +44,8 @@ class Indicator:
         return menu
 
     def on_menu_addressbook_activate(self, widget):
-        pass
+        ad = AddressDialog()
+        ad.run()
 
     def quit(self, widget):
         Gtk.main_quit()

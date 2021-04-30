@@ -71,6 +71,10 @@ class ContactDialog(Gtk.Dialog):
             self._contact = contact
         else:
             self._contact = None
+        if crud == Crud.DELETE or crud == Crud.READ:
+            self._name.set_sensitive(False)
+            self._email.set_sensitive(False)
+            self._mobile.set_sensitive(False)
         self.show_all()
 
     def get_contact(self):

@@ -4,6 +4,7 @@
 import unittest
 import os
 from dbcontact import DbContact
+from contact import Contact
 
 class TestDb(unittest.TestCase):
     def setUp(self):
@@ -17,14 +18,15 @@ class TestDb(unittest.TestCase):
             os.remove(self._filename)
 
     def test_new(self):
-        contact = self._db.new('lorenzo', 'lorenzo@atareao.es', '12345678')
-        self.assertIsNotNone(contact)
+        contact = Contact.new('lorenzo', 'lorenzo@atareao.es', '12345678')
+        contact_id = self._db.new(contact)
+        self.assertIsNotNone(contact_id)
 
     def test_search_by_name(self):
         name = 'Lorenzo'
         email = 'lorenzo@atareao.es'
         mobile = '12345678'
-        contact = self._db.new(name, email, mobile)
+        contact = self._db.new(Contact.new(name, email, mobile))
         contacts = self._db.search_by_name(name)
         self.assertIs(len(contacts), 1)
         self.assertEqual(contacts[0].name, name)
@@ -33,7 +35,7 @@ class TestDb(unittest.TestCase):
         name = 'Lorenzo'
         email = 'lorenzo@atareao.es'
         mobile = '12345678'
-        contact = self._db.new(name, email, mobile)
+        contact = self._db.new(Contact.new(name, email, mobile))
         contacts = self._db.search_by_email(email)
         self.assertIs(len(contacts), 1)
         self.assertEqual(contacts[0].email, email)
@@ -42,7 +44,7 @@ class TestDb(unittest.TestCase):
         name = 'Lorenzo'
         email = 'lorenzo@atareao.es'
         mobile = '12345678'
-        contact = self._db.new(name, email, mobile)
+        contact = self._db.new(Contact.new(name, email, mobile))
         contacts = self._db.search_by_mobile(mobile)
         self.assertIs(len(contacts), 1)
         self.assertEqual(contacts[0].mobile, mobile)
@@ -51,7 +53,7 @@ class TestDb(unittest.TestCase):
         name = 'Lorenzo'
         email = 'lorenzo@atareao.es'
         mobile = '12345678'
-        contact = self._db.new(name, email, mobile)
+        contact = self._db.new(Contact.new(name, email, mobile))
         exists = self._db.exists(contact)
         self.assertTrue(exists)
 
@@ -59,7 +61,7 @@ class TestDb(unittest.TestCase):
         name = 'Lorenzo'
         email = 'lorenzo@atareao.es'
         mobile = '12345678'
-        contact = self._db.new(name, email, mobile)
+        contact = self._db.new(Contact.new(name, email, mobile))
         exists = self._db.exists(contact)
         self.assertTrue(exists)
         self._db.delete(contact.id)

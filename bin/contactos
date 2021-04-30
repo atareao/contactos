@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 os.path.join(os.path.dirname(__file__), "../src")
             ),
         )
-    from main import Main
+    from indicator import main
 
     try:
         """

@@ -43,8 +43,10 @@ class AddressDialog(Gtk.Dialog):
         button_edit.connect('clicked', self.edit)
         box.add(button_edit)
         button_delete = Gtk.Button.new_with_label('Delete')
+        button_delete.connect('clicked', self.delete)
         box.add(button_delete)
         button_show = Gtk.Button.new_with_label('Show')
+        button_show.connect('clicked', self.show)
         box.add(button_show)
 
         self._list = Gtk.ListBox()
@@ -53,6 +55,14 @@ class AddressDialog(Gtk.Dialog):
         self.load()
 
         self.show_all()
+
+    def show(self, widget):
+        selected_row = self._list.get_selected_row()
+        if selected_row:
+            contact = selected_row.get_contact()
+            cd = ContactDialog(Crud.READ, contact)
+            cd.run()
+            cd.destroy()
 
     def add(self, widget):
         cd = ContactDialog(Crud.CREATE)
@@ -71,10 +81,20 @@ class AddressDialog(Gtk.Dialog):
         selected_row = self._list.get_selected_row()
         if selected_row:
             contact = selected_row.get_contact()
-            cd = ContactDialog(Crud.DELETE, contact)
+            cd = ContactDialog(Crud.UPDATE, contact)
             if cd.run() == Gtk.ResponseType.OK:
                 contact = cd.get_contact()
                 selected_row.set_contact(contact)
+            cd.destroy()
+
+    def delete(self, widget):
+        selected_row = self._list.get_selected_row()
+        if selected_row:
+            contact = selected_row.get_contact()
+            cd = ContactDialog(Crud.DELETE, contact)
+            if cd.run() == Gtk.ResponseType.OK:
+                self._db.delete(contact.id)
+                self._list.remove(selected_row)
             cd.destroy()
 
     def load(self):
